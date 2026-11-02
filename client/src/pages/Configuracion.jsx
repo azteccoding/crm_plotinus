@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { api } from '../api.js';
 import { REGIMENES } from '../catalogos.js';
 import { Boton, Campo, Encabezado, useAviso, useConfig } from '../components/ui.jsx';
+import { Candado, useSesionProtegida } from '../components/Protegido.jsx';
 
 export function CamposDespacho({ d, setD }) {
   const cambiar = (c) => (e) => setD({ ...d, [c]: e.target.value });
@@ -78,6 +79,7 @@ export default function Configuracion() {
   const avisar = useAviso();
   const [d, setD] = useState(config);
   useEffect(() => setD(config), [config]);
+  const { sesion, abrir, cerrar } = useSesionProtegida();
 
   const guardar = async (e) => {
     e.preventDefault();
@@ -85,12 +87,19 @@ export default function Configuracion() {
       await api('/config', { method: 'PUT', body: d });
       await recargar();
       avisar('Datos del despacho guardados');
-    } catch (er) { avisar(er.message, 'error'); }
+    } catch (er) {
+      if (er.status === 401) cerrar();
+      avisar(er.message, 'error');
+    }
   };
+
+  if (!sesion) return <Candado titulo="Configuración" onAbrir={abrir} />;
 
   return (
     <>
-      <Encabezado titulo="Configuración" subtitulo="Datos que aparecen en cotizaciones, facturas y contratos." />
+      <Encabezado titulo="Configuración" subtitulo="Datos que aparecen en cotizaciones, facturas y contratos.">
+        <Boton icono="candado" variante="oscuro" onClick={cerrar}>Cerrar sección</Boton>
+      </Encabezado>
       <div className="rejilla-2">
         <section className="tarjeta">
           <h2>Datos del despacho</h2>

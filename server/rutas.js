@@ -5,7 +5,7 @@ import {
   Cliente, Cita, Documento, Servicio, Cotizacion, Factura, Ingreso, Plantilla, Contrato, Config,
   siguienteFolio,
 } from './models.js';
-import { rutasSeguridad, requiereAccesoVentas } from './seguridad.js';
+import { rutasSeguridad, requiereAccesoOPrimerUso, requiereAccesoVentas } from './seguridad.js';
 
 const err = (status, mensaje) => Object.assign(new Error(mensaje), { status });
 const redondear = (n) => Math.round((Number(n) || 0) * 100) / 100;
@@ -70,7 +70,7 @@ export function crearRutas() {
   r.get('/config', async (_req, res) => {
     res.json(await Config.findById('despacho').lean() || {});
   });
-  r.put('/config', async (req, res) => {
+  r.put('/config', requiereAccesoOPrimerUso, async (req, res) => {
     const { _id, createdAt, updatedAt, ...datos } = req.body;
     res.json(await Config.findByIdAndUpdate('despacho', datos, { new: true, upsert: true }));
   });
@@ -181,6 +181,8 @@ export function crearRutas() {
   });
 
   // Catálogo de servicios y cotizaciones
+  // Consultar precios es libre; cambiarlos requiere las contraseñas.
+  r.use('/servicios', (req, res, next) => (req.method === 'GET' ? next() : requiereAccesoVentas(req, res, next)));
   crud(r, '/servicios', Servicio, { buscarEn: ['nombre', 'categoria'], orden: { categoria: 1, nombre: 1 } });
   borrar(r, '/servicios', Servicio);
 

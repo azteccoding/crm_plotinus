@@ -1,56 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import { aInputFecha, api, fecha, mesActual, moneda, setTokenVentas } from '../api.js';
 import { Boton, Campo, Encabezado, Icono, Membrete, Pestanas, SelectorCliente, Vacio, useAviso, useClientes, useImprimir } from '../components/ui.jsx';
+import { Candado, useSesionProtegida } from '../components/Protegido.jsx';
 
 const MESES = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-const CLAVE_SESION = 'plotinus-ventas';
-
-function leerSesion() {
-  try {
-    const s = JSON.parse(sessionStorage.getItem(CLAVE_SESION));
-    return s && s.expira > Date.now() ? s : null;
-  } catch { return null; }
-}
-
-function Candado({ onAbrir }) {
-  const [modo, setModo] = useState('ambas');
-  const [secretaria, setSecretaria] = useState('');
-  const [abogado, setAbogado] = useState('');
-  const [superClave, setSuper] = useState('');
-  const [error, setError] = useState('');
-
-  const entrar = async (e) => {
-    e.preventDefault();
-    setError('');
-    try {
-      const body = modo === 'ambas' ? { secretaria, abogado } : { superClave };
-      onAbrir(await api('/seguridad/desbloquear', { method: 'POST', body }));
-    } catch (er) { setError(er.message); }
-  };
-
-  return (
-    <div className="candado">
-      <div className="tarjeta">
-        <div className="candado-icono"><Icono nombre="candado" tam={24} /></div>
-        <h1 style={{ fontSize: '2rem' }}>Ventas del mes</h1>
-        <p className="muted">Esta sección está protegida. Se requieren las dos contraseñas, o la contraseña maestra del abogado.</p>
-        <Pestanas valor={modo} onCambio={(m) => { setModo(m); setError(''); }} opciones={[['ambas', 'Secretaria + abogado'], ['super', 'Contraseña maestra']]} />
-        {error && <div className="error-caja">{error}</div>}
-        <form className="formulario" onSubmit={entrar}>
-          {modo === 'ambas' ? (
-            <>
-              <Campo etiqueta="Contraseña de la secretaria" ancho="completo"><input type="password" value={secretaria} onChange={(e) => setSecretaria(e.target.value)} required autoFocus autoComplete="off" /></Campo>
-              <Campo etiqueta="Contraseña del abogado" ancho="completo"><input type="password" value={abogado} onChange={(e) => setAbogado(e.target.value)} required autoComplete="off" /></Campo>
-            </>
-          ) : (
-            <Campo etiqueta="Contraseña maestra del abogado" ancho="completo"><input type="password" value={superClave} onChange={(e) => setSuper(e.target.value)} required autoFocus autoComplete="off" /></Campo>
-          )}
-          <div className="campo-completo"><Boton type="submit" icono="candado" style={{ width: '100%' }}>Entrar</Boton></div>
-        </form>
-      </div>
-    </div>
-  );
-}
 
 function Reporte({ datos, mes }) {
   return (
@@ -82,25 +35,13 @@ export default function Ventas() {
   const avisar = useAviso();
   const imprimir = useImprimir();
   const [clientes] = useClientes();
-  const [sesion, setSesion] = useState(leerSesion);
+  const { sesion, abrir, cerrar: cerrarSesion } = useSesionProtegida();
   const [mes, setMes] = useState(mesActual);
   const [datos, setDatos] = useState(null);
   const [anual, setAnual] = useState(null);
   const [nuevo, setNuevo] = useState({ fecha: aInputFecha(new Date()), concepto: '', cliente: '', monto: '', formaPago: 'Efectivo' });
 
-  const abrir = (s) => { sessionStorage.setItem(CLAVE_SESION, JSON.stringify(s)); setSesion(s); };
-  const cerrar = useCallback(() => {
-    api('/seguridad/salir', { method: 'POST' }).catch(() => {});
-    sessionStorage.removeItem(CLAVE_SESION);
-    setTokenVentas(null);
-    setSesion(null);
-    setDatos(null);
-  }, []);
-
-  useEffect(() => {
-    setTokenVentas(sesion?.token || null);
-    return () => setTokenVentas(null);
-  }, [sesion]);
+  const cerrar = useCallback(() => { cerrarSesion(); setDatos(null); }, [cerrarSesion]);
 
   const cargar = useCallback(async () => {
     if (!sesion) return;
@@ -115,7 +56,7 @@ export default function Ventas() {
   }, [sesion, mes, cerrar, avisar]);
   useEffect(() => { cargar(); }, [cargar]);
 
-  if (!sesion) return <Candado onAbrir={abrir} />;
+  if (!sesion) return <Candado titulo="Ventas del mes" onAbrir={abrir} />;
 
   const registrar = async (e) => {
     e.preventDefault();

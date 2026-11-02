@@ -91,11 +91,11 @@ Anótelas en un lugar seguro.
 | **WhatsApp** | Abre WhatsApp de escritorio. Si no está instalado, abre WhatsApp Web. En la lista de clientes, el ícono de WhatsApp abre el chat con ese cliente. |
 | **Sitio web** | Abre plotinus.com.mx. |
 | **Servicios en línea** | Despliega en abanico las ligas a PJF (juicio en línea / amparo), CURP, semanas cotizadas del IMSS, SAT, constancia fiscal, validación de RFC y de facturas, Registro Público de Guanajuato, SIGER, actas, Poder Judicial de Guanajuato, Centro Federal de Conciliación, Semanario Judicial, cédula profesional, leyes federales y estatales, y DOF. |
-| **Costos de asesoría** | Catálogo de servicios con precio. Se eligen servicios, se escribe el nombre del cliente y se imprime la cotización. Los precios iniciales son **de ejemplo**: ajústelos en la pestaña “Catálogo de precios”. |
+| **Costos de asesoría** | Catálogo de servicios con precio. Se eligen servicios, se escribe el nombre del cliente y se imprime la cotización. Los precios iniciales son **de ejemplo**: ajústelos en la pestaña “Catálogo de precios”, que está **protegida** con las mismas contraseñas que “Ventas del mes”. |
 | **Ventas del mes** | Totales de facturas e ingresos sin factura del mes y gráfica del año. **Protegida**: pide las contraseñas de la secretaria **y** del abogado, o solo la contraseña maestra. Se cierra sola después de 20 minutos. |
 | **Facturas** | Elaborar, imprimir, marcar como pagadas o cancelar facturas. Por ahora **no son facturas electrónicas (CFDI)**; la impresión lo indica. |
 | **Contratos** | Generar contratos y escritos con los datos del cliente: prestación de servicios profesionales, compraventa de bien mueble, arrendamiento, reconocimiento de adeudo, pensión alimenticia, carta poder y recibo de honorarios. Las plantillas se pueden modificar o crear nuevas. |
-| **Configuración** | Datos del despacho, cambio de contraseñas y datos de conexión a la base de datos. |
+| **Configuración** | Datos del despacho, cambio de contraseñas y datos de conexión a la base de datos. **Protegida** con las mismas contraseñas que “Ventas del mes”. |
 
 ### Imprimir
 
@@ -108,8 +108,9 @@ La primera vez el navegador pregunta “¿Abrir WhatsApp?”. Marque **Permitir 
 
 ---
 
-## 5. Contraseñas de “Ventas del mes”
+## 5. Contraseñas de las secciones protegidas
 
+- Protegen **Ventas del mes**, el **Catálogo de precios** (en Costos de asesoría) y **Configuración**. Al abrir una, las otras quedan abiertas también hasta que se presione “Cerrar sección” o pasen 20 minutos.
 - Para entrar se necesitan **las dos** contraseñas (secretaria + abogado) **o** la **contraseña maestra** sola.
 - Para cambiar una contraseña: **Configuración → Cambiar contraseñas**. Se pide la contraseña actual de esa persona o la contraseña maestra.
 - **Si la secretaria deja de trabajar en el despacho:** el abogado entra a Configuración, elige “Secretaria”, escribe la **contraseña maestra** como contraseña actual y define una nueva para la nueva secretaria.

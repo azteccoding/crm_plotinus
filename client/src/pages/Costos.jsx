@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { api, fecha, fechaLarga, moneda } from '../api.js';
 import { Boton, Campo, Encabezado, Icono, Membrete, Modal, Pestanas, Vacio, useAviso, useClientes, useConfig, useImprimir } from '../components/ui.jsx';
+import { Candado, useSesionProtegida } from '../components/Protegido.jsx';
 
 export function HojaCotizacion({ c, notasDespacho }) {
   return (
@@ -164,6 +165,7 @@ export default function Costos() {
   const [servicios, setServicios] = useState([]);
   const [cotizaciones, setCotizaciones] = useState([]);
   const [editando, setEditando] = useState(null);
+  const { sesion, abrir, cerrar } = useSesionProtegida();
 
   const cargar = useCallback(() => {
     api('/servicios').then(setServicios).catch(() => {});
@@ -181,7 +183,12 @@ export default function Costos() {
   return (
     <>
       <Encabezado titulo="Costos de asesoría" subtitulo="Seleccione servicios, escriba el nombre del cliente e imprima la cotización.">
-        {tab === 'catalogo' && <Boton icono="mas" onClick={() => setEditando({})}>Nuevo servicio</Boton>}
+        {tab === 'catalogo' && sesion && (
+          <>
+            <Boton icono="candado" variante="borde" onClick={cerrar}>Bloquear</Boton>
+            <Boton icono="mas" onClick={() => setEditando({})}>Nuevo servicio</Boton>
+          </>
+        )}
       </Encabezado>
       <Pestanas valor={tab} onCambio={setTab} opciones={[['cotizar', 'Cotizar'], ['historial', 'Cotizaciones emitidas'], ['catalogo', 'Catálogo de precios']]} />
 
@@ -210,7 +217,9 @@ export default function Costos() {
           </div>
         ))}
 
-      {tab === 'catalogo' && (
+      {tab === 'catalogo' && !sesion && <Candado titulo="Catálogo de precios" onAbrir={abrir} />}
+
+      {tab === 'catalogo' && sesion && (
         <div className="tabla-envoltura">
           <table className="tabla">
             <thead><tr><th>Servicio</th><th>Categoría</th><th>Unidad</th><th className="num">Precio</th><th /></tr></thead>
@@ -227,7 +236,7 @@ export default function Costos() {
           </table>
         </div>
       )}
-      {editando && <FormularioServicio inicial={editando} onCerrar={() => setEditando(null)} onGuardado={() => { setEditando(null); cargar(); }} />}
+      {editando && sesion && <FormularioServicio inicial={editando} onCerrar={() => setEditando(null)} onGuardado={() => { setEditando(null); cargar(); }} />}
     </>
   );
 }

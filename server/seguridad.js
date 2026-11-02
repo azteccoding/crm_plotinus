@@ -46,9 +46,15 @@ export function requiereAccesoVentas(req, _res, next) {
   const expira = token && sesiones.get(token);
   if (!expira || expira < Date.now()) {
     if (token) sesiones.delete(token);
-    return next(err(401, 'La sesión de ventas expiró. Vuelva a ingresar las contraseñas.'));
+    return next(err(401, 'La sesión protegida expiró. Vuelva a ingresar las contraseñas.'));
   }
   next();
+}
+
+// En el primer uso (aún sin contraseñas) el asistente puede guardar los datos del despacho.
+export async function requiereAccesoOPrimerUso(req, res, next) {
+  if (!(await obtenerClaves())) return next();
+  requiereAccesoVentas(req, res, next);
 }
 
 export const rutasSeguridad = Router();

@@ -82,6 +82,7 @@ export default function Tablero() {
                     <div className="cita-titulo">
                       {c.titulo}{c.cliente?.nombre ? ` — ${c.cliente.nombre}` : ''}
                       <small>{fechaHora(c.inicio)}{c.lugar ? ` · ${c.lugar}` : ''}</small>
+                      {c.notas && <small style={{ whiteSpace: 'pre-wrap' }}>{c.notas}</small>}
                     </div>
                     <span className="etiqueta etiqueta-oro">{c.tipo}</span>
                   </li>

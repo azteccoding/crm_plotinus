@@ -76,6 +76,7 @@ function BannerCita() {
       <div>
         <strong>{minutos > 0 ? `Cita en ${minutos} min` : 'Cita en curso'}</strong> · {hora(cita.inicio)} · {cita.titulo}
         {cita.cliente?.nombre ? ` — ${cita.cliente.nombre}` : ''}{cita.lugar ? ` (${cita.lugar})` : ''}
+        {cita.notas && <div className="chico" style={{ whiteSpace: 'pre-wrap' }}>{cita.notas}</div>}
       </div>
       <button type="button" className="btn-icono" aria-label="Ocultar aviso"
         onClick={() => setDescartadas((s) => new Set(s).add(cita._id))}><Icono nombre="cerrar" /></button>

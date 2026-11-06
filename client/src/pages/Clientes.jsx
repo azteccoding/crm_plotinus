@@ -187,7 +187,7 @@ export function DetalleCliente() {
           {rel.citas.length === 0 ? <p className="muted">Sin citas.</p> : (
             <table className="tabla"><tbody>
               {rel.citas.slice(0, 10).map((x) => (
-                <tr key={x._id}><td className="muted">{fechaHora(x.inicio)}</td><td>{x.titulo}</td><td><span className="etiqueta">{x.estado}</span></td></tr>
+                <tr key={x._id}><td className="muted">{fechaHora(x.inicio)}</td><td>{x.titulo}{x.notas && <div className="muted chico" style={{ whiteSpace: 'pre-wrap' }}>{x.notas}</div>}</td><td><span className="etiqueta">{x.estado}</span></td></tr>
               ))}
             </tbody></table>
           )}

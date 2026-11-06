@@ -58,7 +58,7 @@ function FormularioCita({ inicial, clientes, onCerrar, onGuardado }) {
           <select value={d.estado} onChange={cambiar('estado')}>{Object.entries(ESTADOS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select>
         </Campo>
         <Campo etiqueta="Lugar" ancho="tercio"><input value={d.lugar} onChange={cambiar('lugar')} placeholder="Oficina, juzgado…" /></Campo>
-        <Campo etiqueta="Notas" ancho="completo"><textarea value={d.notas} onChange={cambiar('notas')} rows={3} /></Campo>
+        <Campo etiqueta="Comentario" ancho="completo"><textarea value={d.notas} onChange={cambiar('notas')} rows={3} placeholder="Ej. Traer identificación, llamar un día antes…" /></Campo>
       </form>
     </Modal>
   );
@@ -174,6 +174,7 @@ export default function Agenda() {
                   <div>
                     <strong>{c.titulo}</strong>{c.cliente?.nombre && <span> — {c.cliente.nombre}</span>}
                     <div className="muted chico">{c.tipo}{c.lugar ? ` · ${c.lugar}` : ''} · {c.duracionMin} min · {ESTADOS[c.estado]}</div>
+                    {c.notas && <div className="chico" style={{ whiteSpace: 'pre-wrap', marginTop: '.25rem' }}>{c.notas}</div>}
                   </div>
                   <div className="acc">
                     {c.estado === 'programada' && <button type="button" className="btn btn-borde btn-chico" onClick={() => marcar(c, 'realizada')}>Realizada</button>}
